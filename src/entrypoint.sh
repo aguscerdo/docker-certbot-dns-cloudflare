@@ -105,22 +105,31 @@ run_certbot() {
     debug_flag=""
     [ "$DEBUG" = "true" ] && debug_flag="-v"
 
-    $certbot_cmd $debug_flag certonly \
-        --dns-cloudflare \
-        --dns-cloudflare-credentials "$CLOUDFLARE_CREDENTIALS_FILE" \
-        --dns-cloudflare-propagation-seconds "$CLOUDFLARE_PROPAGATION_SECONDS" \
-        -d "$CERTBOT_DOMAINS" \
-        --key-type "$CERTBOT_KEY_TYPE" \
-        --email "$CERTBOT_EMAIL" \
-        --server "$CERTBOT_SERVER" \
-        --agree-tos \
-        --non-interactive \
-        --strict-permissions
-    exit_code=$?
-    if [ $exit_code -ne 0 ]; then
-        echo "Error: certbot command failed with exit code $exit_code"
-        exit 1
+    declare -a certificates_list
+    if [[ "$SEPARATE_CERTIFICATES" = "true" ]]; then
+      IFS=',' read -r -a certificates_list <<< "$CERTBOT_DOMAINS"
+    else
+      all_certificates = ("$CERTBOT_DOMAINS")
     fi
+
+    for certificate in "${certificates_list[@]}"; do
+      $certbot_cmd $debug_flag certonly \
+          --dns-cloudflare \
+          --dns-cloudflare-credentials "$CLOUDFLARE_CREDENTIALS_FILE" \
+          --dns-cloudflare-propagation-seconds "$CLOUDFLARE_PROPAGATION_SECONDS" \
+          -d "$certificate" \
+          --key-type "$CERTBOT_KEY_TYPE" \
+          --email "$CERTBOT_EMAIL" \
+          --server "$CERTBOT_SERVER" \
+          --agree-tos \
+          --non-interactive \
+          --strict-permissions
+      exit_code=$?
+      if [ $exit_code -ne 0 ]; then
+          echo "Error: certbot command failed with exit code $exit_code"
+          exit 1
+      fi
+    done
 
     if [ "$REPLACE_SYMLINKS" = "true" ]; then
         replace_symlinks "/etc/letsencrypt/live"

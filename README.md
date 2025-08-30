@@ -54,20 +54,21 @@ We designed this image to work great in orchestrated deployments like Kubernetes
 
 The following environment variables can be used to customize the Certbot container:
 
-| Variable               | Description                                                         | Default Value |
-|------------------------|---------------------------------------------------------------------|---------------|
-| `CERTBOT_DOMAINS`      | Comma-separated list of domains for which to obtain the certificate | - |
-| `CERTBOT_EMAIL`        | Email address for Let's Encrypt notifications                       | - |
-| `CERTBOT_KEY_TYPE`     | Type of private key to generate                                     | `ecdsa` |
-| `CERTBOT_SERVER`       | The ACME server URL                                                 | `https://acme-v02.api.letsencrypt.org/directory` |
-| `CLOUDFLARE_API_TOKEN` | Cloudflare API token for DNS authentication (see below how to create one)                         | - |
-| `CLOUDFLARE_CREDENTIALS_FILE` | Path to the Cloudflare credentials file. | `/cloudflare.ini` |
+| Variable                         | Description                                                                                                | Default Value |
+|----------------------------------|------------------------------------------------------------------------------------------------------------|---------------|
+| `CERTBOT_DOMAINS`                | Comma-separated list of domains for which to obtain the certificate                                        | - |
+| `CERTBOT_EMAIL`                  | Email address for Let's Encrypt notifications                                                              | - |
+| `CERTBOT_KEY_TYPE`               | Type of private key to generate                                                                            | `ecdsa` |
+| `CERTBOT_SERVER`                 | The ACME server URL                                                                                        | `https://acme-v02.api.letsencrypt.org/directory` |
+| `CLOUDFLARE_API_TOKEN`           | Cloudflare API token for DNS authentication (see below how to create one)                                  | - |
+| `CLOUDFLARE_CREDENTIALS_FILE`    | Path to the Cloudflare credentials file.                                                                   | `/cloudflare.ini` |
 | `CLOUDFLARE_PROPAGATION_SECONDS` | Wait time (in seconds) after setting DNS TXT records before validation. Useful if DNS propagation is slow. | `10` |
-| `DEBUG`                | Enable debug mode (prints more information to the console)            | `false`                    |
-| `PUID`                 | The user ID to run certbot as                                       | `0`                    |
-| `PGID`                 | The group ID to run certbot as                                        | `0`                    |
-| `RENEWAL_INTERVAL`     | Interval between certificate renewal checks. Set to `0` to disable renewals and only run once.                         | 43200 seconds (12 hours) |
-| `REPLACE_SYMLINKS`     | Replaces symlinks with direct copies of the files they reference (required for Windows) | `false`                    |
+| `DEBUG`                          | Enable debug mode (prints more information to the console)                                                 | `false`                    |
+| `PUID`                           | The user ID to run certbot as                                                                              | `0`                    |
+| `PGID`                           | The group ID to run certbot as                                                                             | `0`                    |
+| `RENEWAL_INTERVAL`               | Interval between certificate renewal checks. Set to `0` to disable renewals and only run once.             | 43200 seconds (12 hours) |
+| `REPLACE_SYMLINKS`               | Replaces symlinks with direct copies of the files they reference (required for Windows)                    | `false`                    |
+| `SEPARATE_CERTIFICATES`          | Obtains separate certificates for each domain in `CERTBOT_DOMAINS`                                           | `false`                    |
 
 ### Creating a Cloudflare API Token
 
