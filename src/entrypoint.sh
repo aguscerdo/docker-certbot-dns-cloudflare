@@ -105,19 +105,19 @@ run_certbot() {
     debug_flag=""
     [ "$DEBUG" = "true" ] && debug_flag="-v"
 
-    declare -a certificates_list
-    if [[ "$SEPARATE_CERTIFICATES" = "true" ]]; then
-      IFS=',' read -r -a certificates_list <<< "$CERTBOT_DOMAINS"
-    else
-      certificates_list=("$CERTBOT_DOMAINS")
+
+    # Remove all spaces so that for loop doesn't split.
+    domains_to_process=$(echo "$CERTBOT_DOMAINS" | tr -d ' ')
+    if [ "$SEPARATE_CERTIFICATES" = "true" ]; then
+        domains_to_process=$(echo "$domains_to_process" | tr ',' ' ')
     fi
 
-    for certificate in "${certificates_list[@]}"; do
+    for domain in ${domains_to_process}; do
       $certbot_cmd $debug_flag certonly \
           --dns-cloudflare \
           --dns-cloudflare-credentials "$CLOUDFLARE_CREDENTIALS_FILE" \
           --dns-cloudflare-propagation-seconds "$CLOUDFLARE_PROPAGATION_SECONDS" \
-          -d "$certificate" \
+          -d "$domain" \
           --key-type "$CERTBOT_KEY_TYPE" \
           --email "$CERTBOT_EMAIL" \
           --server "$CERTBOT_SERVER" \
